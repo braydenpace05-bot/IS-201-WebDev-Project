@@ -1,0 +1,240 @@
+<!--
+Brayden Pace
+Is 201 (001)
+4/15/2026
+-->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+       <!-- Header -->
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Dinosaur Game</title>
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+        <link href="css/styles.css" rel="stylesheet" />
+        <!-- Dinosaur Game Styles -->
+        <style>
+            body {
+                margin: 0;
+                overflow-x: hidden;
+                background: #f7f7f7;
+            }
+            #game {
+                display: block;
+                margin: 0 auto;
+                width: 100%;
+                max-width: 800px;
+                height: 200px;
+                background: white;
+                border: 2px solid #ced4da;
+                border-radius: 12px;
+                box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+            }
+            #game-container {
+                padding: 2rem 0;
+            }
+            #game-instructions {
+                max-width: 800px;
+                margin: 0.75rem auto 0;
+                text-align: center;
+                color: #6c757d;
+            }
+        </style>
+    </head>
+    <!-- Navigation & Game Instructions -->
+    <body class="d-flex flex-column h-100">
+        <main class="flex-shrink-0">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                <div class="container px-5">
+                    <a class="navbar-brand">IS 201 WebDev Project</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" href="resume.html">Resume</a></li>
+                            <li class="nav-item"><a class="nav-link" href="scratch.html">Scratch</a></li>
+                            <li class="nav-item"><a class="nav-link" href="tableau.html">Tableau</a></li>
+                            <li class="nav-item"><a class="nav-link active" href="game.html">Game</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <section class="py-5">
+                <div class="container px-5">
+                    <div class="text-center mb-4">
+                        <h1 class="fw-bolder">Chrome Dinosaur Game</h1>
+                        <p class="lead fw-normal text-muted mb-0">Press Space / Arrow Up / Click to jump. Avoid the cactus.</p>
+                    </div>
+                    <div id="game-container">
+                        <canvas id="game" width="800" height="200"></canvas>
+                    </div>
+                    <p id="game-instructions">Tap the canvas or press Space / Arrow Up. If you hit the cactus, press Space to restart.</p>
+                </div>
+            </section>
+        </main>
+        <!-- Footer -->
+        <footer class="bg-dark py-4 mt-auto">
+            <div class="container px-5">
+                <div class="row align-items-center justify-content-between flex-column flex-sm-row">
+                    <div class="col-auto"><div class="small m-0 text-white">Copyright &copy; Brayden Pace 2026</div></div>
+                </div>
+            </div>
+        </footer>
+        <!-- Dinosaur Game Code -->
+           <script>
+            const canvas = document.getElementById('game');
+            const ctx = canvas.getContext('2d');
+
+            let dino = { x: 50, y: 150, w: 40, h: 40, vy: 0, jumping: false };
+            let gravity = 0.6;
+            let obstacles = [];
+            let speed = 6;
+            let frame = 0;
+            let score = 0;
+            let gameOver = false;
+            let gameStarted = false;
+            let nextObstacleFrame = 90;
+            let minSpawnGap = 60;
+            let maxSpawnGap = 120;
+
+            function drawDino() {
+                ctx.fillStyle = 'black';
+                ctx.fillRect(dino.x, dino.y, dino.w, dino.h);
+            }
+
+            function drawObstacles() {
+                ctx.fillStyle = 'green';
+                obstacles.forEach(o => {
+                    ctx.fillRect(o.x, o.y, o.w, o.h);
+                });
+            }
+
+            function drawGround() {
+                ctx.strokeStyle = '#8a8a8a';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, 190);
+                ctx.lineTo(canvas.width, 190);
+                ctx.stroke();
+            }
+
+            function drawScore() {
+                ctx.fillStyle = '#333';
+                ctx.font = '16px sans-serif';
+                ctx.fillText('Score: ' + score, 10, 24);
+                if (gameOver) {
+                    ctx.fillStyle = '#d00';
+                    ctx.font = '20px sans-serif';
+                    ctx.fillText('Game Over - Press Space to restart', 160, 110);
+                }
+            }
+
+            function jump() {
+                if (gameOver) return;
+                if (!dino.jumping) {
+                    dino.vy = -12;
+                    dino.jumping = true;
+                    gameStarted = true;
+                }
+            }
+
+            function resetGame() {
+                obstacles = [];
+                speed = 6;
+                frame = 0;
+                score = 0;
+                nextObstacleFrame = 90;
+                dino.y = 150;
+                dino.vy = 0;
+                dino.jumping = false;
+                gameOver = false;
+                gameStarted = true;
+            }
+
+            function update() {
+                frame++;
+                dino.y += dino.vy;
+                dino.vy += gravity;
+
+                if (dino.y >= 150) {
+                    dino.y = 150;
+                    dino.vy = 0;
+                    dino.jumping = false;
+                }
+
+                if (frame >= nextObstacleFrame) {
+                    obstacles.push({ x: canvas.width, y: 150, w: 20, h: 40 });
+                    nextObstacleFrame = frame + minSpawnGap + Math.floor(Math.random() * (maxSpawnGap - minSpawnGap));
+                }
+
+                speed = 6 + score * 0.03;
+
+                obstacles.forEach(o => o.x -= speed);
+
+                obstacles = obstacles.filter(o => o.x > -o.w);
+
+                score = Math.floor(frame / 10);
+
+                obstacles.forEach(o => {
+                    if (
+                        dino.x < o.x + o.w &&
+                        dino.x + dino.w > o.x &&
+                        dino.y < o.y + o.h &&
+                        dino.y + dino.h > o.y
+                    ) {
+                        gameOver = true;
+                    }
+                });
+
+                if (gameOver) {
+                    gameStarted = false;
+                }
+            }
+
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawGround();
+                drawDino();
+                drawObstacles();
+                drawScore();
+            }
+
+            function loop() {
+                if (gameStarted && !gameOver) {
+                    update();
+                }
+                render();
+                requestAnimationFrame(loop);
+            }
+
+            window.addEventListener('keydown', (event) => {
+                if (event.code === 'Space' || event.code === 'ArrowUp') {
+                    event.preventDefault();
+                    if (gameOver) {
+                        resetGame();
+                    } else {
+                        jump();
+                    }
+                }
+            });
+
+            canvas.addEventListener('click', () => {
+                if (gameOver) {
+                    resetGame();
+                } else {
+                    jump();
+                }
+            });
+
+            resetGame();
+            loop();
+        </script>
+         <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
+    </body>
+</html>

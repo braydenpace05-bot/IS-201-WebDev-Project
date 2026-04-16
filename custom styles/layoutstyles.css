@@ -1,0 +1,101 @@
+body {
+    margin: 0;
+    background-color: #d1d1d1;
+}
+
+/* REMOVE “FRAMED BOX” LOOK */
+.common {
+    position: absolute;
+    border: none; /* THIS removes all side framing */
+}
+
+/* HEADER */
+.header {
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    position: static;
+    border-bottom: 1px solid #ccc;
+    background: #2a2a2a;
+    z-index: 10;
+}
+
+/* LEFT MENU */
+.leftmenu {
+    top: 80px;
+    left: 0;
+    bottom: 40px;
+    width: 120px;
+    position: fixed;
+    border-right: none;
+    padding: 10px;
+}
+
+.leftmenu a {
+    display: block;
+    padding: 12px 10px;
+    margin: 5px 0;
+    background-color: #2a2a2a;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: 0.3s;
+    text-align: center;
+}
+
+.leftmenu a:hover {
+    background-color: #444;
+    transform: scale(1.05);
+}
+
+/* RIGHT MENU */
+.rightmenu {
+    top: 80px;
+    right: 0;
+    bottom: 40px;
+    width: 160px;
+    position: fixed;
+    border-left: none; /* removed border */
+    padding: 10px;
+}
+
+/* MAIN CONTENT */
+.mainbody {
+    margin-top: 20px;
+    margin-left: 140px;
+    margin-right: 180px;
+    padding: 20px;
+}
+
+/* FOOTER */
+.footer {
+    position: static;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+
+    display: flex;
+    justify-content: center;  /* centers left-right */
+    align-items: center;      /* centers up-down */
+
+    background: #2a2a2a;
+    border-top: 1px solid #ccc;
+    font-size: 12px;
+}
+
+/* NAV LINKS */
+.subheader {
+    float: right;
+    padding: 25px;
+}
+
+/* CENTER IMAGES */
+img {
+    display: block;
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
